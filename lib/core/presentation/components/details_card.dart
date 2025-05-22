@@ -4,7 +4,6 @@ import 'package:movies_app/core/domain/entities/media.dart';
 import 'package:movies_app/core/domain/entities/media_details.dart';
 import 'package:movies_app/core/presentation/components/slider_card_image.dart';
 import 'package:movies_app/watchlist/presentation/controllers/watchlist_bloc/watchlist_bloc.dart';
-
 import 'package:movies_app/core/resources/app_colors.dart';
 import 'package:movies_app/core/resources/app_values.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -24,9 +23,8 @@ class DetailsCard extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final size = MediaQuery.of(context).size;
 
-    context
-        .read<WatchlistBloc>()
-        .add(CheckItemAddedEvent(tmdbId: mediaDetails.tmdbID));
+    context.read<WatchlistBloc>().add(CheckItemAddedEvent(tmdbId: mediaDetails.tmdbID));
+
     return SafeArea(
       child: Stack(
         children: [
@@ -113,6 +111,7 @@ class DetailsCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                // Geri butonu
                 InkWell(
                   onTap: () {
                     Navigator.of(context).pop();
@@ -130,56 +129,118 @@ class DetailsCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                InkWell(
-                  onTap: () {
-                    mediaDetails.isAdded
-                        ? context
+
+                // Sağ üst: Bookmark + Tik/Plus Toggle
+                Column(
+                  children: [
+                    // Watchlist (bookmark)
+                    InkWell(
+                      onTap: () {
+                        mediaDetails.isAdded
+                            ? context
                             .read<WatchlistBloc>()
                             .add(RemoveWatchListItemEvent(mediaDetails.id!))
-                        : context.read<WatchlistBloc>().add(
-                              AddWatchListItemEvent(
-                                  media: Media.fromMediaDetails(mediaDetails)),
-                            );
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(AppPadding.p8),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColors.iconContainerColor,
-                    ),
-                    child: BlocConsumer<WatchlistBloc, WatchlistState>(
-                      listener: (context, state) {
-                        if (state.status == WatchlistRequestStatus.itemAdded) {
-                          mediaDetails.id = state.id;
-                          mediaDetails.isAdded = true;
-                        } else if (state.status ==
-                            WatchlistRequestStatus.itemRemoved) {
-                          mediaDetails.id = null;
-                          mediaDetails.isAdded = false;
-                        } else if (state.status ==
-                                WatchlistRequestStatus.isItemAdded &&
-                            state.id != -1) {
-                          mediaDetails.id = state.id;
-                          mediaDetails.isAdded = true;
-                        }
-                      },
-                      builder: (context, state) {
-                        return Icon(
-                          Icons.bookmark_rounded,
-                          color: mediaDetails.isAdded
-                              ? AppColors.primary
-                              : AppColors.secondaryText,
-                          size: AppSize.s20,
+                            : context.read<WatchlistBloc>().add(
+                          AddWatchListItemEvent(
+                              media: Media.fromMediaDetails(mediaDetails)),
                         );
                       },
+                      child: Container(
+                        padding: const EdgeInsets.all(AppPadding.p8),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.iconContainerColor,
+                        ),
+                        child: BlocConsumer<WatchlistBloc, WatchlistState>(
+                          listener: (context, state) {
+                            if (state.status == WatchlistRequestStatus.itemAdded) {
+                              mediaDetails.id = state.id;
+                              mediaDetails.isAdded = true;
+                            } else if (state.status ==
+                                WatchlistRequestStatus.itemRemoved) {
+                              mediaDetails.id = null;
+                              mediaDetails.isAdded = false;
+                            } else if (state.status ==
+                                WatchlistRequestStatus.isItemAdded &&
+                                state.id != -1) {
+                              mediaDetails.id = state.id;
+                              mediaDetails.isAdded = true;
+                            }
+                          },
+                          builder: (context, state) {
+                            return Icon(
+                              Icons.bookmark_rounded,
+                              color: mediaDetails.isAdded
+                                  ? AppColors.primary
+                                  : AppColors.secondaryText,
+                              size: AppSize.s20,
+                            );
+                          },
+                        ),
+                      ),
                     ),
-                  ),
+
+                    const SizedBox(height: 8),
+
+                    // ✅ Artı / Tik Toggle Buton
+                    StatefulBuilder(
+                      builder: (context, setState) {
+                       return  const WatchToggleButton();
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class WatchToggleButton extends StatefulWidget {
+  const WatchToggleButton({super.key});
+
+  @override
+  State<WatchToggleButton> createState() => _WatchToggleButtonState();
+}
+
+class _WatchToggleButtonState extends State<WatchToggleButton> {
+  bool isWatched = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        CircleAvatar(
+          radius: 20,
+          backgroundColor: isWatched ? Colors.green : Colors.grey.shade800,
+          child: IconButton(
+            icon: Icon(
+              isWatched ? Icons.check : Icons.add,
+              color: Colors.white,
+              size: 20,
+            ),
+            onPressed: () {
+              setState(() {
+                isWatched = !isWatched;
+              });
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    isWatched
+                        ? "İzlendi olarak işaretlendi"
+                        : "İzlenmedi olarak işaretlendi",
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+
+      ],
     );
   }
 }
