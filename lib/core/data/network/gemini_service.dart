@@ -4,7 +4,7 @@ import 'package:movies_app/core/data/network/api_constants.dart';
 
 class GeminiService {
   static const String _apiKey = 'AIzaSyDCNaHk_qqgX3VTZww8Uy4VL4fzixjXpEI';
-  static const String _url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=$_apiKey';
+  static const String _url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$_apiKey';
 
   Future<String> getGeminiResponse(String prompt) async {
     try {
