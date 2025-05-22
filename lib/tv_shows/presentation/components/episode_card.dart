@@ -3,6 +3,8 @@ import 'package:movies_app/core/presentation/components/image_with_shimmer.dart'
 import 'package:movies_app/core/resources/app_strings.dart';
 import 'package:movies_app/core/resources/app_values.dart';
 import 'package:movies_app/tv_shows/domain/entities/episode.dart';
+import 'package:movies_app/core/presentation/components/episode_watch_toggle_button.dart'; // doğru import
+
 
 class EpisodeCard extends StatelessWidget {
   const EpisodeCard({
@@ -56,9 +58,13 @@ class EpisodeCard extends StatelessWidget {
                 ),
               ],
             ),
-          )
+          ),
+          EpisodeWatchToggleButton(episodeId: '${episode.number}_${episode.airDate}'),
         ],
       ),
     );
   }
 }
+
+
+
