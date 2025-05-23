@@ -60,10 +60,6 @@ class _EpisodeWatchToggleButtonState extends State<EpisodeWatchToggleButton> {
           ),
           onPressed: _toggleWatch,
         ),
-        Text(
-          isWatched ? "İzlendi" : "İzlenmedi",
-          style: Theme.of(context).textTheme.labelSmall,
-        )
       ],
     );
   }

@@ -7,6 +7,7 @@ import 'package:movies_app/watchlist/presentation/controllers/watchlist_bloc/wat
 import 'package:movies_app/core/resources/app_colors.dart';
 import 'package:movies_app/core/resources/app_values.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:movies_app/core/presentation/components/watch_toggle_button.dart';
 
 class DetailsCard extends StatelessWidget {
   const DetailsCard({
@@ -185,7 +186,18 @@ class DetailsCard extends StatelessWidget {
                     // ✅ Artı / Tik Toggle Buton
                     StatefulBuilder(
                       builder: (context, setState) {
-                       return  const WatchToggleButton();
+                        return Container(
+                          padding: const EdgeInsets.all(AppPadding.p8),
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: AppColors.iconContainerColor,
+                          ),
+                          child: SizedBox(
+                            height: AppSize.s20, // Aynı ikon boyutu
+                            width: AppSize.s20,
+                            child: WatchToggleButton(movieId: mediaDetails.tmdbID.toString()),
+                          ),
+                        );
                       },
                     ),
                   ],
@@ -199,48 +211,5 @@ class DetailsCard extends StatelessWidget {
   }
 }
 
-class WatchToggleButton extends StatefulWidget {
-  const WatchToggleButton({super.key});
 
-  @override
-  State<WatchToggleButton> createState() => _WatchToggleButtonState();
-}
 
-class _WatchToggleButtonState extends State<WatchToggleButton> {
-  bool isWatched = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 20,
-          backgroundColor: isWatched ? Colors.green : Colors.grey.shade800,
-          child: IconButton(
-            icon: Icon(
-              isWatched ? Icons.check : Icons.add,
-              color: Colors.white,
-              size: 20,
-            ),
-            onPressed: () {
-              setState(() {
-                isWatched = !isWatched;
-              });
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    isWatched
-                        ? "İzlendi olarak işaretlendi"
-                        : "İzlenmedi olarak işaretlendi",
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-
-      ],
-    );
-  }
-}
