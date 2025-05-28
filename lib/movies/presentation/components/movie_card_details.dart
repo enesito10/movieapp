@@ -42,7 +42,12 @@ class MovieCardDetails extends StatelessWidget {
             style: textTheme.bodyLarge,
           ),
           const SizedBox(height: 8),
-          WatchToggleButton(movieId: movieDetails.tmdbID.toString()),
+          WatchToggleButton(
+              movieId: movieDetails.tmdbID.toString(),
+              title: movieDetails.title,
+              genres: movieDetails.genres.split(','),
+              voteAverage: movieDetails.voteAverage,
+          ),
         ],
       );
     } else {

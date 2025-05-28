@@ -6,7 +6,20 @@ class GeminiService {
   static const String _apiKey = 'AIzaSyDCNaHk_qqgX3VTZww8Uy4VL4fzixjXpEI';
   static const String _url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$_apiKey';
 
-  Future<String> getGeminiResponse(String prompt) async {
+  Future<String> getGeminiResponse({
+    required String userInput,
+    required List<String> genres,
+    required List<String> titles,
+  }) async {
+    final prompt = '''
+Kullanıcı daha önce şu türlerde filmler izledi: ${genres.join(', ')}.
+İzlediği bazı filmler şunlar: ${titles.join(', ')}.
+Lütfen bundan sonra film önerisi isterse, bu zevklere benzer filmler öner.
+Kullanıcıya ne tür sevdiğini sorma.
+
+Kullanıcı mesajı: $userInput
+''';
+
     try {
       final response = await http.post(
         Uri.parse(_url),
@@ -37,3 +50,4 @@ class GeminiService {
     }
   }
 }
+

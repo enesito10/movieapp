@@ -7,7 +7,6 @@ import 'package:movies_app/watchlist/presentation/controllers/watchlist_bloc/wat
 import 'package:movies_app/core/resources/app_colors.dart';
 import 'package:movies_app/core/resources/app_values.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:movies_app/core/presentation/components/watch_toggle_button.dart';
 
 class DetailsCard extends StatelessWidget {
   const DetailsCard({
