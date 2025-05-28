@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movies_app/core/domain/entities/media_details.dart';
 import 'package:movies_app/core/presentation/components/circle_dot.dart';
+import '../../../core/presentation/components/watch_toggle_button.dart';
 
 class MovieCardDetails extends StatelessWidget {
   const MovieCardDetails({
@@ -40,6 +41,8 @@ class MovieCardDetails extends StatelessWidget {
             movieDetails.runtime!,
             style: textTheme.bodyLarge,
           ),
+          const SizedBox(height: 8),
+          WatchToggleButton(movieId: movieDetails.tmdbID.toString()),
         ],
       );
     } else {

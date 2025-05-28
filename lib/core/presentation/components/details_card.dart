@@ -180,26 +180,7 @@ class DetailsCard extends StatelessWidget {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 8),
-
-                    // ✅ Artı / Tik Toggle Buton
-                    StatefulBuilder(
-                      builder: (context, setState) {
-                        return Container(
-                          padding: const EdgeInsets.all(AppPadding.p8),
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: AppColors.iconContainerColor,
-                          ),
-                          child: SizedBox(
-                            height: AppSize.s20, // Aynı ikon boyutu
-                            width: AppSize.s20,
-                            child: WatchToggleButton(movieId: mediaDetails.tmdbID.toString()),
-                          ),
-                        );
-                      },
-                    ),
                   ],
                 ),
               ],
