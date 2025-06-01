@@ -1,13 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:movies_app/tv_shows/selection/episode_selection.dart';
+import 'package:movies_app/tv_shows/selection/episode_selection_repository.dart';
 
 class EpisodeWatchToggleButton extends StatefulWidget {
-  final String episodeId;
+  final String id;
+  final String name;
+  final int season;
+  final int episode;
+  final String airDate;
 
-  const EpisodeWatchToggleButton({required this.episodeId, super.key});
+  const EpisodeWatchToggleButton({
+    super.key,
+    required this.id,
+    required this.name,
+    required this.season,
+    required this.episode,
+    required this.airDate,
+  });
 
   @override
-  State<EpisodeWatchToggleButton> createState() => _EpisodeWatchToggleButtonState();
+  State<EpisodeWatchToggleButton> createState() =>
+      _EpisodeWatchToggleButtonState();
 }
 
 class _EpisodeWatchToggleButtonState extends State<EpisodeWatchToggleButton> {
@@ -21,46 +35,55 @@ class _EpisodeWatchToggleButtonState extends State<EpisodeWatchToggleButton> {
 
   Future<void> _loadStatus() async {
     final prefs = await SharedPreferences.getInstance();
-    final watchedEpisodes = prefs.getStringList('watched_episodes') ?? [];
+    final watched = prefs.getStringList('watched_episodes') ?? [];
     setState(() {
-      isWatched = watchedEpisodes.contains(widget.episodeId);
+      isWatched = watched.contains(widget.id);
     });
   }
 
   Future<void> _toggleWatch() async {
     final prefs = await SharedPreferences.getInstance();
-    final watchedEpisodes = prefs.getStringList('watched_episodes') ?? [];
+    final watched = prefs.getStringList('watched_episodes') ?? [];
 
-    setState(() {
-      if (watchedEpisodes.contains(widget.episodeId)) {
-        watchedEpisodes.remove(widget.episodeId);
-        isWatched = false;
-      } else {
-        watchedEpisodes.add(widget.episodeId);
-        isWatched = true;
-      }
-    });
+    final repo = EpisodeSelectionRepository();
 
-    await prefs.setStringList('watched_episodes', watchedEpisodes);
+    if (watched.contains(widget.id)) {
+      watched.remove(widget.id);
+      await repo.removeEpisode(widget.id);
+      isWatched = false;
+    } else {
+      watched.add(widget.id);
+      final ep = EpisodeSelection(
+        id: widget.id,
+        name: widget.name,
+        season: widget.season,
+        episode: widget.episode,
+        airDate: widget.airDate,
+      );
+      await repo.addEpisode(ep);
+      isWatched = true;
+    }
 
-    // Ekrana bildirim
+    await prefs.setStringList('watched_episodes', watched);
+    setState(() {});
+
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(isWatched ? 'İzlendi olarak işaretlendi' : 'İzlenmedi olarak işaretlendi')),
+      SnackBar(
+        content: Text(isWatched
+            ? 'Bölüm izlendi olarak işaretlendi'
+            : 'İzlenmedi olarak işaretlendi'),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        IconButton(
-          icon: Icon(
-            isWatched ? Icons.check_circle : Icons.add_circle_outline,
-            color: isWatched ? Colors.green : Colors.grey,
-          ),
-          onPressed: _toggleWatch,
-        ),
-      ],
+    return IconButton(
+      icon: Icon(
+        isWatched ? Icons.check_circle : Icons.add_circle_outline,
+        color: isWatched ? Colors.green : Colors.grey,
+      ),
+      onPressed: _toggleWatch,
     );
   }
 }

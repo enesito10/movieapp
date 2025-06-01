@@ -3,16 +3,19 @@ import 'package:movies_app/core/presentation/components/image_with_shimmer.dart'
 import 'package:movies_app/core/resources/app_strings.dart';
 import 'package:movies_app/core/resources/app_values.dart';
 import 'package:movies_app/tv_shows/domain/entities/episode.dart';
-import 'package:movies_app/core/presentation/components/episode_watch_toggle_button.dart'; // doğru import
+import 'package:movies_app/core/presentation/components/episode_watch_toggle_button.dart';
+import 'package:movies_app/tv_shows/selection/episode_selection.dart'; // doğru import
 
 
 class EpisodeCard extends StatelessWidget {
   const EpisodeCard({
     super.key,
     required this.episode,
+    required this.seriesTitle,
   });
 
   final Episode episode;
+  final String seriesTitle;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +62,13 @@ class EpisodeCard extends StatelessWidget {
               ],
             ),
           ),
-          EpisodeWatchToggleButton(episodeId: '${episode.number}_${episode.airDate}'),
+          EpisodeWatchToggleButton(
+            id: '${seriesTitle}_${episode.season}_${episode.number}',
+            name: episode.name,
+            season: episode.season,
+            episode: episode.number,
+            airDate: episode.airDate,
+          ),
         ],
       ),
     );

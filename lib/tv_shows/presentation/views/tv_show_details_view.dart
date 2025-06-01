@@ -78,11 +78,13 @@ class TVShowDetailsWidget extends StatelessWidget {
           ),
           getOverviewSection(tvShowDetails.overview),
           const SectionTitle(title: AppStrings.lastEpisodeOnAir),
-          EpisodeCard(episode: tvShowDetails.lastEpisodeToAir!),
+          EpisodeCard(episode: tvShowDetails.lastEpisodeToAir!,
+          seriesTitle: tvShowDetails.title,),
           const SectionTitle(title: AppStrings.seasons),
           SeasonsSection(
             tmdbID: tvShowDetails.tmdbID,
             seasons: tvShowDetails.seasons!,
+              seriesTitle: tvShowDetails.title
           ),
           getSimilarSection(tvShowDetails.similar),
           const SizedBox(height: AppSize.s8),

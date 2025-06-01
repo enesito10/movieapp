@@ -8,10 +8,12 @@ class SeasonsSection extends StatelessWidget {
     super.key,
     required this.seasons,
     required this.tmdbID,
+    required this.seriesTitle,
   });
 
   final List<Season> seasons;
   final int tmdbID;
+  final String seriesTitle;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +27,7 @@ class SeasonsSection extends StatelessWidget {
         itemBuilder: (context, index) => SeasonCard(
           season: seasons[index],
           tvShowId: tmdbID,
+          seriesTitle: seriesTitle,
         ),
         separatorBuilder: (context, index) =>
             const SizedBox(height: AppSize.s10),

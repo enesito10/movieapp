@@ -31,15 +31,3 @@ class MovieSelection {
     );
   }
 }
-
-
-//final genres = allSelectedMovies.expand((e) => e.genres).toSet().toList();
-// final titles = allSelectedMovies.map((e) => e.title).toList();
-//
-// final prompt = '''
-// Kullanıcı daha önce şu türlerde filmler izledi: ${genres.join(', ')}.
-// İzlediği bazı filmler şunlar: ${titles.join(', ')}.
-//
-// Lütfen bundan sonra "film öner" dendiğinde, bu zevklere benzer filmler öner.
-// Kullanıcıya ne tür sevdiğini sorma.
-// ''';

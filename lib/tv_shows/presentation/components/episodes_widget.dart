@@ -8,9 +8,11 @@ class EpisodesWidget extends StatelessWidget {
   const EpisodesWidget({
     super.key,
     required this.episodes,
+    required this.seriesTitle,
   });
 
   final List<Episode> episodes;
+  final String seriesTitle;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,9 @@ class EpisodesWidget extends StatelessWidget {
               physics: const BouncingScrollPhysics(),
               itemCount: episodes.length,
               itemBuilder: (context, index) =>
-                  EpisodeCard(episode: episodes[index]),
+                  EpisodeCard(episode: episodes[index],
+                  seriesTitle: seriesTitle,
+                  ),
               separatorBuilder: (context, index) =>
                   const SizedBox(height: AppSize.s10),
             ),

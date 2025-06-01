@@ -18,10 +18,12 @@ class SeasonCard extends StatelessWidget {
     super.key,
     required this.season,
     required this.tvShowId,
+    required this.seriesTitle,
   });
 
   final Season season;
   final int tvShowId;
+  final String seriesTitle;
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +109,9 @@ void _showBottomSheet(context, id, seasonNumber) {
             case RequestStatus.loading:
               return const LoadingIndicator();
             case RequestStatus.loaded:
-              return EpisodesWidget(episodes: state.seasonDetails!.episodes);
+              return EpisodesWidget(episodes: state.seasonDetails!.episodes,
+                seriesTitle: (state.seasonDetails!.seriesTitle),
+              );
             case RequestStatus.error:
               return const ErrorText();
           }

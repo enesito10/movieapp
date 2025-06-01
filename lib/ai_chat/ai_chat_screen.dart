@@ -1,10 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../core/data/network/gemini_service.dart';
-import '../movies/selection/movie_selection_repository.dart'; // ⭐️ Film verilerini almak için
+import '../movies/selection/movie_selection_repository.dart';
+import '../tv_shows/selection/episode_selection.dart';
+import '../tv_shows/selection/episode_selection_repository.dart'; // ⭐️ Film verilerini almak için
 
 List<String> _genres = [];
 List<String> _titles = [];
+List<EpisodeSelection> _episodes = [];
+final EpisodeSelectionRepository _episodeRepo = EpisodeSelectionRepository();
+
 
 final geminiService = GeminiService();
 
@@ -29,13 +34,14 @@ class _AiChatScreenState extends State<AiChatScreen> {
 
   Future<void> _sendInitialPrompt() async {
     final allSelectedMovies = await _repository.getSelectedMovies();
-
-    if (allSelectedMovies.isEmpty) return;
+    final allSelectedEpisodes = await _episodeRepo.getSelectedEpisodes();
 
     _genres = allSelectedMovies.expand((e) => e.genres).toSet().toList();
     _titles = allSelectedMovies.map((e) => e.title).take(5).toList();
+    _episodes = allSelectedEpisodes;
 
-    // İlk AI mesajı: isteğe bağlı olarak kullanıcıya bir selam veya öneri atabiliriz
+    if (_genres.isEmpty && _titles.isEmpty && _episodes.isEmpty) return;
+
     const initialUserPrompt = 'Merhaba!';
 
     setState(() {
@@ -47,6 +53,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
       userInput: initialUserPrompt,
       genres: _genres,
       titles: _titles,
+      episodes: _episodes,
     );
 
     setState(() {
@@ -54,6 +61,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
       _messages.add({"role": "ai", "text": response});
     });
   }
+
 
   void _sendMessage() async {
     final input = _controller.text.trim();
@@ -70,6 +78,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
       userInput: input,
       genres: _genres,
       titles: _titles,
+      episodes: _episodes,
     );
 
     setState(() {
