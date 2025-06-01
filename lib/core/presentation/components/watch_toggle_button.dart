@@ -42,17 +42,22 @@ class _WatchToggleButtonState extends State<WatchToggleButton> {
     final prefs = await SharedPreferences.getInstance();
     final watchedMovies = prefs.getStringList('watched_movies') ?? [];
 
-    final repo =MovieSelectionRepository();
-
+    final repo = MovieSelectionRepository();
 
     if (watchedMovies.contains(widget.movieId)) {
       watchedMovies.remove(widget.movieId);
-      isWatched = false;
+
+      setState(() {
+        isWatched = false;
+      });
 
       await repo.removeMovie(widget.movieId);
     } else {
       watchedMovies.add(widget.movieId);
-      isWatched = true;
+
+      setState(() {
+        isWatched = true;
+      });
 
       final movie = MovieSelection(
         id: widget.movieId,
@@ -63,10 +68,7 @@ class _WatchToggleButtonState extends State<WatchToggleButton> {
       await repo.addMovie(movie);
     }
 
-
-
     await prefs.setStringList('watched_movies', watchedMovies);
-
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -76,6 +78,7 @@ class _WatchToggleButtonState extends State<WatchToggleButton> {
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
