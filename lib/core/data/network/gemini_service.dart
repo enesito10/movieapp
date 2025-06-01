@@ -33,7 +33,8 @@ Kullanıcı daha önce şu türlerde filmler izledi: ${genres.join(', ')}.
 Ayrıca şu dizileri izledi: $watchedSeriesSummary.
 
 Kullanıcı bundan sonra film veya dizi önerisi isterse, bu geçmiş zevklere göre öneride bulun. 
-Kullanıcıya soru sorma. Direkt öneri ver.
+Eğer öneri isterse önerebilirsin.
+Başka bir şey söylüyorsa cevap ver. Önerme istemedikçe bir şey önermek zorunda değilsin.
 
 Kullanıcı mesajı: $userInput
 ''';

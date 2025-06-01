@@ -4,6 +4,7 @@ import '../core/data/network/gemini_service.dart';
 import '../movies/selection/movie_selection_repository.dart';
 import '../tv_shows/selection/episode_selection.dart';
 import '../tv_shows/selection/episode_selection_repository.dart'; // ⭐️ Film verilerini almak için
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 List<String> _genres = [];
 List<String> _titles = [];
@@ -23,13 +24,18 @@ class AiChatScreen extends StatefulWidget {
 class _AiChatScreenState extends State<AiChatScreen> {
   final TextEditingController _controller = TextEditingController();
   final List<Map<String, String>> _messages = [];
+  late stt.SpeechToText _speech;
+  bool _isListening = false;
 
   final MovieSelectionRepository _repository = MovieSelectionRepository();
 
   @override
   void initState() {
     super.initState();
+    _speech = stt.SpeechToText();
     _sendInitialPrompt(); // Otomatik prompt gönder
+
+
   }
 
   Future<void> _sendInitialPrompt() async {
@@ -86,14 +92,61 @@ class _AiChatScreenState extends State<AiChatScreen> {
       _messages.add({"role": "ai", "text": response});
     });
   }
+  void _listen() async {
+    if (!_isListening) {
+      bool available = await _speech.initialize();
+      if (available) {
+        setState(() => _isListening = true);
+        _speech.listen(
+          onResult: (result) {
+            // Konuşma sırasında anlık güncelle
+            setState(() {
+              _controller.text = result.recognizedWords;
+            });
+
+            // Eğer otomatik bitiş algılanırsa direkt gönder
+            if (result.finalResult) {
+              setState(() => _isListening = false);
+              _speech.stop();
+              _sendMessage();
+            }
+          },
+        );
+      }
+    } else {
+      // 🎯 Mikrofon elle kapatıldığında en son tanınan sözü gönder
+      setState(() => _isListening = false);
+      _speech.stop();
+
+      // Eğer metin boş değilse mesajı gönder
+      if (_controller.text.trim().isNotEmpty) {
+        _sendMessage();
+      }
+    }
+    // speech_to_text başlatılırken locale kontrolü eklenebilir:
+    await _speech.initialize(
+      onStatus: (val) => print('Status: $val'),
+      onError: (val) => print('Error: $val'),
+    );
+  }
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('AI Chat')),
-      body: Column(
+      body: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+      child: Column(
         children: [
+          if (_isListening)
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text(
+                '🎤 Dinleniyor...',
+                style: TextStyle(color: Colors.green, fontSize: 16),
+              ),
+            ),
           Expanded(
             child: ListView.builder(
               itemCount: _messages.length,
@@ -155,11 +208,17 @@ class _AiChatScreenState extends State<AiChatScreen> {
                   color: Colors.red,
                   onPressed: _sendMessage,
                 ),
+                IconButton(
+                  icon: Icon(_isListening ? Icons.mic : Icons.mic_none),
+                  color: _isListening ? Colors.green : Colors.red,
+                  onPressed: _listen,
+                ),
               ],
             ),
           ),
         ],
       ),
+      )
     );
   }
 }
